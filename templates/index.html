@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        .chat-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .chat-history p {
+            margin: 5px 0;
+        }
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .suggestion {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 5px;
+            display: inline-block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Snehal GPT</h1>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-history" id="chat_history">
+            <!-- Suggestions will be added here -->
+        </div>
+        <div class="input-container">
+            <label for="user_input">You:</label>
+            <input type="text" id="user_input">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Powered by Snehal GPT</p>
+    </div>
+
+    <script>
+        function addSuggestion(suggestion) {
+            // Create a suggestion element and append it to the chat history
+            var suggestionElement = document.createElement('div');
+            suggestionElement.className = 'suggestion';
+            suggestionElement.textContent = suggestion;
+            suggestionElement.addEventListener('click', function() {
+                // When clicked, fill the user input field and send the message
+                document.getElementById('user_input').value = suggestion;
+                sendMessage();
+            });
+            document.getElementById('chat_history').appendChild(suggestionElement);
+        }
+
+        // Add initial suggestions
+        addSuggestion('Tell me about Python programming.');
+        addSuggestion('Recommend a good anime to watch.');
+        addSuggestion('What are the latest tech trends?');
+
+        function sendMessage() {
+            var userMessage = document.getElementById('user_input').value;
+            document.getElementById('chat_history').innerHTML += '<p><strong>You:</strong> ' + userMessage + '</p>';
+
+            // Send the message to the server
+            fetch('/get?msg=' + encodeURIComponent(userMessage))
+                .then(response => response.json())
+                .then(data => {
+                    var botResponse = data.response;
+                    document.getElementById('chat_history').innerHTML += '<p><strong>Bot:</strong> ' + botResponse + '</p>';
+                });
+
+            document.getElementById('user_input').value = '';
+        }
+    </script>
+</body>
+</html>
